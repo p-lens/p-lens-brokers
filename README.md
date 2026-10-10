@@ -23,6 +23,12 @@ not as what anyone says, but as what happened there that day, a line at a
 time. The record holds no answer to "what does this parlor pay": whoever reads
 it reads that from the facts set down.
 
+An observation is set down as it was reported, before anyone has checked it.
+Mistakes are among the lines, and lines made up. They are part of the record
+too. Whether a line is to be believed is for whoever reads it to judge, setting
+it beside the other lines of its parlor and the other lines of its observer
+(`observer`).
+
 ## The name
 
 A broker deals in what others hand over, and stands between the two of them.
@@ -52,7 +58,7 @@ One line is one observation. A parlor may have any number of them, on one day
 or many.
 
 ```json
-{"parlor":"osm:way/…","observedOn":"2026-10-11","broker":"交換所","game":"pachinko","tier":"4円","prize":"小景品","tokens":280,"yen":1000,"submission":"…"}
+{"parlor":"osm:way/…","observedOn":"2026-10-11","broker":"交換所","game":"pachinko","tier":"4円","prize":"小景品","tokens":280,"yen":1000,"submission":"…","observer":"…"}
 ```
 
 | Field | | |
@@ -65,7 +71,8 @@ or many.
 | `prize` | always unless `tokens` | The special prize's name as the parlor calls it (`大景品`, `小景品`, …) |
 | `tokens` | always unless `prize` | The balls or medals the parlor took for the special prizes |
 | `yen` | always | What the broker paid for them, in yen |
-| `submission` | always | The report at survey.p-lens.jp the observation was told in. The observer is in that report's record under a pseudonym of their device, never a person's name |
+| `submission` | always | The id of the report at survey.p-lens.jp the observation was told in. Where the same report said something of the parlor too, an issue in p-lens-parlors has the same id |
+| `observer` | always | The observer: a pseudonym their device made for itself (a UUID), never a person's name. One observer's observations stand under one pseudonym |
 
 The least that can be exchanged — from ¥500, from ¥1,000 — is read from the
 smallest `yen` among the observations. When a number changes, what is seen
@@ -78,11 +85,13 @@ passed over by whoever reads the two together.
 
 ## Where the data comes from
 
-From reports taken at survey.p-lens.jp and nowhere else: first-hand, seen on
-site by the observer, given under CC0 by the reporter and checked before they
-are taken in. Nothing is taken from hearsay, from word of a change to come,
-from a parlor portal, a map service such as Google Maps, or any other site or
-database.
+From reports taken at survey.p-lens.jp and nowhere else: reported as seen on
+site by the observer, and given under CC0 by the reporter. survey.p-lens.jp
+takes only a report whose source is 現地で確認した and whose day is not one
+still to come, holds it to the format, and sets it down as it is. Whether what
+it says is true is not checked. Reporters agree not to report hearsay, word of
+a change to come, or anything copied from a parlor portal, a map service such
+as Google Maps, or any other site or database.
 
 ## Using it
 
@@ -113,19 +122,33 @@ What is published where is in `wrangler.jsonc`, the headers sent with each
 file in `data/_headers`, and what someone opening brokers.p-lens.jp is shown in
 `data/index.html`.
 
-## Taking a report in
+## How an observation comes to be here
 
-An observation arrives as a row of 特殊景品 in a parlor's report at
-survey.p-lens.jp — a row that says what was received at the broker — as an
-issue in p-lens-parlors.
+An observation is a row of 特殊景品 in a parlor's report at survey.p-lens.jp
+that says what was received at the broker.
 
-1. Read the issue in p-lens-parlors, and check its source and what it says.
-   Take only a report whose source is 現地で確認した and whose day is not one
-   still to come
-2. Add a line to `data/observations.jsonl` for each row that states a sum:
-   the parlor's `id` as `parlor`, the report's day as `observedOn`, the
-   report's id as `submission`, パチンコ as `pachinko`, パチスロ as
-   `pachislot`, a rate of 4 as `4円`. Where the report names no broker,
-   `broker` is `交換所`
-3. `bun run check`
-4. Get it onto `main`. Lines already there are not rewritten
+- **Seen at a parlor on the list**, it is added to the end of
+  `data/observations.jsonl` by survey.p-lens.jp as the report is taken, a line
+  a row, and published as it is. Nobody comes between
+- **Seen at a parlor not yet on the list**, it cannot be a line, the parlor
+  having no `id` yet. It becomes an issue in this repository (labelled
+  `survey`, `broker`, `add`). Once p-lens-parlors lists the parlor, the issue
+  is set down by hand, a line a row, the parlor's `id` as `parlor` and the
+  report's id as `submission`
+
+What the same report says the parlor posts — its corners, what it rents and
+replays at, what each prize takes — becomes an issue in p-lens-parlors, and no
+yen is filed there.
+
+Lines already there are not rewritten. A made-up line is removed by a commit to
+`main` that deletes it; every line of one `observer` can be removed together.
+
+survey.p-lens.jp sets down only lines that pass `bun run check`. A line that
+fails it stops the publishing, so when the format changes, survey.p-lens.jp
+is changed first.
+
+This repository has the labels `survey`, `broker` and `add`. The lines are
+added by a GitHub App made for this repository alone — not the App
+survey.p-lens.jp files the parlor list's issues with — installed here and
+nowhere else, and let read and write this repository's **Contents**, to add
+the lines, and its **Issues**, for what is seen at a parlor not yet listed.

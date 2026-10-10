@@ -9,6 +9,11 @@
  * is a fact with a day and a witness, not a rate anyone states, so nothing
  * here is held to be the one line of its parlor or its day.
  *
+ * The lines are set down by survey.p-lens.jp as they are reported, nobody
+ * reading them first, and what publishes this repository runs this check:
+ * a line that fails it stops the publishing, so survey.p-lens.jp must
+ * never set down a line this refuses.
+ *
  * A line names the parlor by its id in p-lens-parlors. That id is not looked
  * up there: the two repositories stand apart, and an observation at a parlor
  * the list no longer has is passed over by whoever reads the two together.
@@ -23,7 +28,10 @@ const TIER = /^\d+(\.\d+)?円$/
 const GAMES = new Set(["pachinko", "pachislot"])
 
 /** The fields an observation's line may have. */
-const FIELDS = ["parlor", "observedOn", "broker", "game", "tier", "prize", "tokens", "yen", "submission"]
+const FIELDS = ["parlor", "observedOn", "broker", "game", "tier", "prize", "tokens", "yen", "submission", "observer"]
+
+/** An observer as a line names one: the pseudonym their device made for itself, a UUID. */
+const OBSERVER = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 /**
  * How far past today, in days, a day may be and still be a day something
@@ -57,11 +65,11 @@ const jsonOf = (line: string): unknown => {
  * Every problem of one observation: where and when it was seen, at which
  * corner, what the parlor's special prizes were — by their name, by the
  * balls or medals they took, or both — the yen the broker paid for them,
- * and the report it was told in.
+ * the report it was told in, and who saw it, by their pseudonym.
  */
 const observationFindings = (value: unknown): readonly string[] => {
   if (!isJson(value)) return ["not a JSON object"]
-  const { parlor, observedOn, broker, game, tier, prize, tokens, yen, submission } = value
+  const { parlor, observedOn, broker, game, tier, prize, tokens, yen, submission, observer } = value
   return [
     ...(Object.keys(value).every((key) => FIELDS.includes(key)) ? [] : ["a field the format does not have"]),
     ...(filled(parlor) ? [] : ["parlor missing"]),
@@ -74,6 +82,7 @@ const observationFindings = (value: unknown): readonly string[] => {
     ...(prize === undefined && tokens === undefined ? ["neither prize nor tokens: nothing says what was bought"] : []),
     ...(isCount(yen) ? [] : ["yen missing or not a whole number above zero"]),
     ...(filled(submission) ? [] : ["submission missing"]),
+    ...(typeof observer === "string" && OBSERVER.test(observer) ? [] : ["observer missing or not a pseudonym"]),
   ]
 }
 
