@@ -65,7 +65,7 @@ or many.
 |---|---|---|
 | `parlor` | always | The parlor the special prizes were given at: an `id` in p-lens-parlors' `parlors.jsonl` or `unplaced.jsonl` |
 | `observedOn` | always | The day the observer saw it (YYYY-MM-DD). It was seen, so the day is never one still to come |
-| `broker` | always | The name of the broker that bought the special prizes, `交換所` where none is known |
+| `broker` | always | The broker that bought the special prizes. survey.p-lens.jp does not ask its name, so every line it adds says `交換所` |
 | `game` | always | `pachinko` or `pachislot` |
 | `tier` | always | The corner, by the rate the parlor advertises (`4円`, `1円`, `20円`, `5円`, …) |
 | `prize` | always unless `tokens` | The special prize's name as the parlor calls it (`大景品`, `小景品`, …) |
