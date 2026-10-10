@@ -1,0 +1,15 @@
+# Sent with every file. Cloudflare reads this file and does not serve it.
+#
+# The observations are open data, read by pages on other sites, so any site may
+# read them.
+#
+# Each file is sent with its version in ETag, which changes when the file
+# does. A page on another site is let read it, so it can ask what version a
+# file is at — a HEAD request — and read the file only when it has moved.
+/*
+  Access-Control-Allow-Origin: *
+  Access-Control-Expose-Headers: ETag
+  X-Content-Type-Options: nosniff
+
+/*.jsonl
+  Content-Type: application/x-ndjson; charset=utf-8

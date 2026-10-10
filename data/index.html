@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="パチンコ・パチスロ店舗の特殊景品が特殊景品交換所でいくらになったか、打ち手が実際に見た事実の公開記録です。JSON Lines 形式で、Open Database License のもとに誰でも使えます。" />
+    <title>P-Lens 特殊景品交換所の観測記録</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 4rem;
+        font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+        line-height: 1.8;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin: 0 0 0.25rem;
+      }
+      h2 {
+        font-size: 1rem;
+        margin: 2.25rem 0 0.5rem;
+      }
+      p,
+      ul {
+        margin: 0.5rem 0;
+      }
+      ul {
+        padding-left: 1.25rem;
+      }
+      code,
+      pre {
+        font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        font-size: 0.875rem;
+      }
+      pre {
+        overflow-x: auto;
+        padding: 0.75rem 1rem;
+        border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+        border-radius: 0.5rem;
+        line-height: 1.6;
+      }
+      .muted {
+        opacity: 0.7;
+        font-size: 0.875rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>P-Lens 特殊景品交換所の観測記録</h1>
+    <p class="muted">brokers.p-lens.jp</p>
+
+    <p>パチンコ・パチスロ店舗の特殊景品が、特殊景品交換所でいくらになったか。打ち手が実際に見た事実の記録です。ここは人が見るページではなく、プログラムが読むためのデータの置き場所です。誰でも、登録なしで読めます。</p>
+
+    <h2>ファイル</h2>
+    <ul>
+      <li><a href="/observations.jsonl">observations.jsonl</a>：観測の記録</li>
+    </ul>
+    <p>JSON Lines 形式で、1 行が 1 つの目撃です。レート表ではなく、その日そこでそうなった、という事実を 1 行ずつ積んでいます。</p>
+
+    <pre>curl https://brokers.p-lens.jp/observations.jsonl
+
+{"parlor":"osm:way/…","observedOn":"…","broker":"交換所","game":"pachinko","tier":"4円","tokens":280,"yen":1000,"submission":"…"}</pre>
+
+    <p>項目の意味とデータの出どころは <a href="https://github.com/p-lens/p-lens-brokers">リポジトリ</a> に書いてあります。</p>
+
+    <h2>使うとき</h2>
+    <p><a href="https://opendatacommons.org/licenses/odbl/">Open Database License（ODbL）</a> のもとで公開しています。使うときは次のように表示し、このデータベースから派生したデータベースは ODbL のもとに置いてください。</p>
+    <pre>© P-Lens contributors</pre>
+  </body>
+</html>

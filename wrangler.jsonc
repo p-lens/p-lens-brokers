@@ -1,0 +1,11 @@
+{
+  // brokers.p-lens.jp: the files in data/, served as they are. There is no
+  // code here; Cloudflare answers for static files without counting them
+  // against a Worker's requests.
+  "name": "p-lens-brokers",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./data"
+  },
+  "routes": [{ "pattern": "brokers.p-lens.jp", "custom_domain": true }]
+}
