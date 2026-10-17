@@ -58,14 +58,14 @@ One line is one observation. A parlor may have any number of them, on one day
 or many.
 
 ```json
-{"parlor":"osm:way/…","observedOn":"2026-10-11","broker":"交換所","game":"pachinko","tier":"4円","prize":"小景品","tokens":280,"yen":1000,"submission":"…","observer":"…"}
+{"parlor":"osm:way/…","observedOn":"2026-10-11","game":"pachinko","tier":"4円","prize":"小景品","tokens":280,"yen":1000,"submission":"…","observer":"…"}
 ```
 
 | Field | | |
 |---|---|---|
 | `parlor` | always | The parlor the special prizes were given at: an `id` in p-lens-parlors' `parlors.jsonl` or `unplaced.jsonl` |
 | `observedOn` | always | The day the observer saw it (YYYY-MM-DD). It was seen, so the day is never one still to come |
-| `broker` | always | The broker that bought the special prizes. survey.p-lens.jp does not ask its name, so every line it adds says `交換所` |
+| `broker` | where named | The name of the broker that bought the special prizes, only where the observer gave one. Most brokers have no name a player would know, so most lines have none |
 | `game` | always | `pachinko` or `pachislot` |
 | `tier` | always | The corner, by the rate the parlor advertises (`4円`, `1円`, `20円`, `5円`, …) |
 | `prize` | always unless `tokens` | The special prize's name as the parlor calls it (`大景品`, `小景品`, …) |

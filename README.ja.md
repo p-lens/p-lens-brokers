@@ -41,14 +41,14 @@ app.p-lens.jp はこのリポジトリを読みません。
 1 行が 1 つの観測です。同じ店舗、同じ日の観測がいくつあってもかまいません。
 
 ```json
-{"parlor":"osm:way/…","observedOn":"2026-10-11","broker":"交換所","game":"pachinko","tier":"4円","prize":"小景品","tokens":280,"yen":1000,"submission":"…","observer":"…"}
+{"parlor":"osm:way/…","observedOn":"2026-10-11","game":"pachinko","tier":"4円","prize":"小景品","tokens":280,"yen":1000,"submission":"…","observer":"…"}
 ```
 
 | 項目 | | |
 |---|---|---|
 | `parlor` | 必ず | 特殊景品を受け取った店舗。p-lens-parlors の `parlors.jsonl` か `unplaced.jsonl` にある `id` |
 | `observedOn` | 必ず | 観測者がそれを見た日（YYYY-MM-DD）。実際に見たことなので、先の日付はありません |
-| `broker` | 必ず | 特殊景品を買い取った交換所。survey.p-lens.jp は交換所の名前を尋ねないので、足される行はどれも `交換所` です |
+| `broker` | 任意 | 特殊景品を買い取った交換所の名前。観測者が名前を入れたときだけあります。名前のない交換所が多いので、ない行がふつうです |
 | `game` | 必ず | `pachinko` か `pachislot` |
 | `tier` | 必ず | コーナー。店舗が掲げているレート（`4円`、`1円`、`20円`、`5円` など） |
 | `prize` | `tokens` がなければ必ず | 特殊景品の名前（`大景品`、`小景品` など、店舗での呼び方） |

@@ -62,8 +62,8 @@ const jsonOf = (line: string): unknown => {
 }
 
 /**
- * Every problem of one observation: where and when it was seen, at which
- * corner, what the parlor's special prizes were — by their name, by the
+ * Every problem of one observation: where and when it was seen, the
+ * broker's name where the observer gave one, at which corner, what the parlor's special prizes were — by their name, by the
  * balls or medals they took, or both — the yen the broker paid for them,
  * the report it was told in, and who saw it, by their pseudonym.
  */
@@ -74,7 +74,7 @@ const observationFindings = (value: unknown): readonly string[] => {
     ...(Object.keys(value).every((key) => FIELDS.includes(key)) ? [] : ["a field the format does not have"]),
     ...(filled(parlor) ? [] : ["parlor missing"]),
     ...(isSeenDay(observedOn) ? [] : ["observedOn missing, not a day, or a day still to come"]),
-    ...(filled(broker) ? [] : ["broker missing"]),
+    ...(broker === undefined || filled(broker) ? [] : ["broker empty"]),
     ...(typeof game === "string" && GAMES.has(game) ? [] : ["game not pachinko or pachislot"]),
     ...(typeof tier === "string" && TIER.test(tier) ? [] : ["tier missing or not a rate"]),
     ...(prize === undefined || filled(prize) ? [] : ["prize empty"]),
