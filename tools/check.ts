@@ -5,9 +5,10 @@
  *   bun tools/check.ts
  *
  * A line is one thing a player saw happen: special prizes a parlor gave
- * for so many balls or medals were bought by its broker for so many yen. It
- * is a fact with a day and a witness, not a rate anyone states, so nothing
- * here is held to be the one line of its parlor or its day.
+ * for so many balls or medals were bought by its broker for so many yen, or
+ * the broker that buys a parlor's special prizes went by a name. It is a
+ * fact with a day and a witness, not a rate anyone states, so nothing here
+ * is held to be the one line of its parlor or its day.
  *
  * The lines are set down by survey.p-lens.jp as they are reported, nobody
  * reading them first, and what publishes this repository runs this check:
@@ -29,6 +30,9 @@ const GAMES = new Set(["pachinko", "pachislot"])
 
 /** The fields an observation's line may have. */
 const FIELDS = ["parlor", "observedOn", "broker", "game", "tier", "prize", "tokens", "yen", "submission", "observer"]
+
+/** The fields that say what was paid: a line has all it needs of them, or none and a broker's name alone. */
+const PAID = ["game", "tier", "prize", "tokens", "yen"]
 
 /** An observer as a line names one: the pseudonym their device made for itself, a UUID. */
 const OBSERVER = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
@@ -61,26 +65,35 @@ const jsonOf = (line: string): unknown => {
   }
 }
 
-/**
- * Every problem of one observation: where and when it was seen, the
- * broker's name where the observer gave one, at which corner, what the parlor's special prizes were — by their name, by the
- * balls or medals they took, or both — the yen the broker paid for them,
- * the report it was told in, and who saw it, by their pseudonym.
- */
-const observationFindings = (value: unknown): readonly string[] => {
-  if (!isJson(value)) return ["not a JSON object"]
-  const { parlor, observedOn, broker, game, tier, prize, tokens, yen, submission, observer } = value
+/** What is wrong with what a line says was paid: at which corner, what the parlor's special prizes were — by their name, by the balls or medals they took, or both — and the yen the broker paid for them. */
+const paidFindings = (value: Json): readonly string[] => {
+  const { game, tier, prize, tokens, yen } = value
   return [
-    ...(Object.keys(value).every((key) => FIELDS.includes(key)) ? [] : ["a field the format does not have"]),
-    ...(filled(parlor) ? [] : ["parlor missing"]),
-    ...(isSeenDay(observedOn) ? [] : ["observedOn missing, not a day, or a day still to come"]),
-    ...(broker === undefined || filled(broker) ? [] : ["broker empty"]),
     ...(typeof game === "string" && GAMES.has(game) ? [] : ["game not pachinko or pachislot"]),
     ...(typeof tier === "string" && TIER.test(tier) ? [] : ["tier missing or not a rate"]),
     ...(prize === undefined || filled(prize) ? [] : ["prize empty"]),
     ...(tokens === undefined || isCount(tokens) ? [] : ["tokens not a whole number above zero"]),
     ...(prize === undefined && tokens === undefined ? ["neither prize nor tokens: nothing says what was bought"] : []),
     ...(isCount(yen) ? [] : ["yen missing or not a whole number above zero"]),
+  ]
+}
+
+/**
+ * Every problem of one observation: where and when it was seen, the
+ * broker's name where the observer gave one, what was paid, the report it
+ * was told in, and who saw it, by their pseudonym. A line that says
+ * nothing of what was paid is the broker's name alone, and must have one.
+ */
+const observationFindings = (value: unknown): readonly string[] => {
+  if (!isJson(value)) return ["not a JSON object"]
+  const { parlor, observedOn, broker, submission, observer } = value
+  const namedOnly = PAID.every((key) => value[key] === undefined)
+  return [
+    ...(Object.keys(value).every((key) => FIELDS.includes(key)) ? [] : ["a field the format does not have"]),
+    ...(filled(parlor) ? [] : ["parlor missing"]),
+    ...(isSeenDay(observedOn) ? [] : ["observedOn missing, not a day, or a day still to come"]),
+    ...(broker === undefined || filled(broker) ? [] : ["broker empty"]),
+    ...(namedOnly ? (broker === undefined ? ["neither what was paid nor a broker's name: the line says nothing"] : []) : paidFindings(value)),
     ...(filled(submission) ? [] : ["submission missing"]),
     ...(typeof observer === "string" && OBSERVER.test(observer) ? [] : ["observer missing or not a pseudonym"]),
   ]

@@ -55,22 +55,28 @@ nothing to the other. app.p-lens.jp does not read this repository.
 ## Format
 
 One line is one observation. A parlor may have any number of them, on one day
-or many.
+or many. An observation is of one of two kinds: what special prizes came to at
+the broker, or the broker's name alone.
 
 ```json
 {"parlor":"osm:way/…","observedOn":"2026-10-11","game":"pachinko","tier":"4円","prize":"小景品","tokens":280,"yen":1000,"submission":"…","observer":"…"}
+{"parlor":"osm:way/…","observedOn":"2026-10-11","broker":"(一社)…","submission":"…","observer":"…"}
 ```
+
+A line of the name alone says the observer saw no sum, but saw the name of the
+broker that buys the parlor's special prizes. It has no `game`, `tier`,
+`prize`, `tokens` or `yen`, and always a `broker`.
 
 | Field | | |
 |---|---|---|
 | `parlor` | always | The parlor the special prizes were given at: an `id` in p-lens-parlors' `parlors.jsonl` or `unplaced.jsonl` |
 | `observedOn` | always | The day the observer saw it (YYYY-MM-DD). It was seen, so the day is never one still to come |
-| `broker` | where named | The name of the broker that bought the special prizes, only where the observer gave one. Most brokers have no name a player would know, so most lines have none |
-| `game` | always | `pachinko` or `pachislot` |
-| `tier` | always | The corner, by the rate the parlor advertises (`4円`, `1円`, `20円`, `5円`, …) |
-| `prize` | always unless `tokens` | The special prize's name as the parlor calls it (`大景品`, `小景品`, …) |
-| `tokens` | always unless `prize` | The balls or medals the parlor took for the special prizes |
-| `yen` | always | What the broker paid for them, in yen |
+| `broker` | always in a line of the name alone; elsewhere where named | The name of the broker that bought the special prizes, only where the observer gave one. Most brokers have no name a player would know, so most lines of a sum have none |
+| `game` | always in a line of a sum | `pachinko` or `pachislot` |
+| `tier` | always in a line of a sum | The corner, by the rate the parlor advertises (`4円`, `1円`, `20円`, `5円`, …) |
+| `prize` | in a line of a sum, always unless `tokens` | The special prize's name as the parlor calls it (`大景品`, `小景品`, …) |
+| `tokens` | in a line of a sum, always unless `prize` | The balls or medals the parlor took for the special prizes |
+| `yen` | always in a line of a sum | What the broker paid for them, in yen |
 | `submission` | always | The id of the report at survey.p-lens.jp the observation was told in. Where the same report said something of the parlor too, an issue in p-lens-parlors has the same id |
 | `observer` | always | The observer: a pseudonym their device made for itself (a UUID), never a person's name. One observer's observations stand under one pseudonym |
 
@@ -125,7 +131,8 @@ file in `data/_headers`, and what someone opening brokers.p-lens.jp is shown in
 ## How an observation comes to be here
 
 An observation is a row of 特殊景品 in a parlor's report at survey.p-lens.jp
-that says what was received at the broker.
+that says what was received at the broker, and the broker's name. A report
+with no such row that names the broker becomes a line of the name alone.
 
 - **Seen at a parlor on the list**, it is added to the end of
   `data/observations.jsonl` by survey.p-lens.jp as the report is taken, a line
@@ -133,7 +140,8 @@ that says what was received at the broker.
 - **Seen at a parlor not yet on the list**, it cannot be a line, the parlor
   having no `id` yet. It becomes an issue in this repository (labelled
   `survey`, `broker`, `add`). Once p-lens-parlors lists the parlor, the issue
-  is set down by hand, a line a row, the parlor's `id` as `parlor` and the
+  is set down by hand, a line a row — or a line of the name alone where it
+  only names the broker — the parlor's `id` as `parlor` and the
   report's id as `submission`
 
 What the same report says the parlor posts — its corners, what it rents and
