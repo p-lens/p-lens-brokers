@@ -29,7 +29,7 @@ const TIER = /^\d+(\.\d+)?円$/
 const GAMES = new Set(["pachinko", "pachislot"])
 
 /** The fields an observation's line may have. */
-const FIELDS = ["parlor", "observedOn", "broker", "game", "tier", "prize", "tokens", "yen", "submission", "observer"]
+const FIELDS = ["parlor", "observedOn", "source", "broker", "game", "tier", "prize", "tokens", "yen", "submission", "observer"]
 
 /** The fields that say what was paid: a line has all it needs of them, or none and a broker's name alone. */
 const PAID = ["game", "tier", "prize", "tokens", "yen"]
@@ -37,12 +37,15 @@ const PAID = ["game", "tier", "prize", "tokens", "yen"]
 /** An observer as a line names one: the pseudonym their device made for itself, a UUID. */
 const OBSERVER = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
+/** How the observer knew it, as survey.p-lens.jp says it: on site, from the parlor's own site, or otherwise. */
+const SOURCES = new Set(["on-site", "publication", "other"])
+
 /**
- * How far past today, in days, a day may be and still be a day something
- * was seen on: the day where the observer stands may be a day ahead of the
- * clock this runs by.
+ * How far past today, in days, a day may be: half a year, for a change a
+ * parlor posts before it comes, and a day more, since the day where the
+ * observer stands may be a day ahead of the clock this runs by.
  */
-const DAYS_AHEAD_OF_HERE = 1
+const DAYS_AHEAD_OF_HERE = 184
 
 type Json = Readonly<Record<string, unknown>>
 
@@ -54,8 +57,8 @@ const filled = (value: unknown): value is string => typeof value === "string" &&
 
 const isCount = (value: unknown): boolean => typeof value === "number" && Number.isInteger(value) && value > 0
 
-/** Whether a day is one something can have been seen on: a day written as one, and not still to come. */
-const isSeenDay = (value: unknown): boolean => typeof value === "string" && DAY.test(value) && (Date.parse(value) - Date.now()) / 86_400_000 <= DAYS_AHEAD_OF_HERE
+/** Whether a day is one a line can be of: a day written as one, and no further ahead than a posted change comes. */
+const isLineDay = (value: unknown): boolean => typeof value === "string" && DAY.test(value) && (Date.parse(value) - Date.now()) / 86_400_000 <= DAYS_AHEAD_OF_HERE
 
 const jsonOf = (line: string): unknown => {
   try {
@@ -79,19 +82,21 @@ const paidFindings = (value: Json): readonly string[] => {
 }
 
 /**
- * Every problem of one observation: where and when it was seen, the
+ * Every problem of one observation: where and when it was seen and how it
+ * was known, the
  * broker's name where the observer gave one, what was paid, the report it
  * was told in, and who saw it, by their pseudonym. A line that says
  * nothing of what was paid is the broker's name alone, and must have one.
  */
 const observationFindings = (value: unknown): readonly string[] => {
   if (!isJson(value)) return ["not a JSON object"]
-  const { parlor, observedOn, broker, submission, observer } = value
+  const { parlor, observedOn, source, broker, submission, observer } = value
   const namedOnly = PAID.every((key) => value[key] === undefined)
   return [
     ...(Object.keys(value).every((key) => FIELDS.includes(key)) ? [] : ["a field the format does not have"]),
     ...(filled(parlor) ? [] : ["parlor missing"]),
-    ...(isSeenDay(observedOn) ? [] : ["observedOn missing, not a day, or a day still to come"]),
+    ...(isLineDay(observedOn) ? [] : ["observedOn missing, not a day, or more than half a year ahead"]),
+    ...(source === undefined || (typeof source === "string" && SOURCES.has(source)) ? [] : ["source not on-site, publication or other"]),
     ...(broker === undefined || filled(broker) ? [] : ["broker empty"]),
     ...(namedOnly ? (broker === undefined ? ["neither what was paid nor a broker's name: the line says nothing"] : []) : paidFindings(value)),
     ...(filled(submission) ? [] : ["submission missing"]),

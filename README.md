@@ -27,7 +27,8 @@ An observation is set down as it was reported, before anyone has checked it.
 Mistakes are among the lines, and lines made up. They are part of the record
 too. Whether a line is to be believed is for whoever reads it to judge, setting
 it beside the other lines of its parlor and the other lines of its observer
-(`observer`).
+(`observer`), and by how it was known (`source`): a line known otherwise than
+on site says what its observer read or was told, not what they saw.
 
 ## The name
 
@@ -59,8 +60,8 @@ or many. An observation is of one of two kinds: what special prizes came to at
 the broker, or the broker's name alone.
 
 ```json
-{"parlor":"osm:way/…","observedOn":"2026-10-11","game":"pachinko","tier":"4円","prize":"小景品","tokens":280,"yen":1000,"submission":"…","observer":"…"}
-{"parlor":"osm:way/…","observedOn":"2026-10-11","broker":"(一社)…","submission":"…","observer":"…"}
+{"parlor":"osm:way/…","observedOn":"2026-10-11","source":"on-site","game":"pachinko","tier":"4円","prize":"小景品","tokens":280,"yen":1000,"submission":"…","observer":"…"}
+{"parlor":"osm:way/…","observedOn":"2026-10-11","source":"on-site","broker":"(一社)…","submission":"…","observer":"…"}
 ```
 
 A line of the name alone says the observer saw no sum, but saw the name of the
@@ -70,7 +71,8 @@ broker that buys the parlor's special prizes. It has no `game`, `tier`,
 | Field | | |
 |---|---|---|
 | `parlor` | always | The parlor the special prizes were given at: an `id` in p-lens-parlors' `parlors.jsonl` or `unplaced.jsonl` |
-| `observedOn` | always | The day the observer saw it (YYYY-MM-DD). It was seen, so the day is never one still to come |
+| `observedOn` | always | The day the observer says it held (YYYY-MM-DD): up to half a year ahead, for a change a parlor posts before it comes |
+| `source` | from 2026-10-22 on | How the observer knew it: `on-site` (現地で確認した), `publication` (the operator's own site) or `other`. Lines before it have none, and were all `on-site`. Nothing is refused by it; whoever reads the lines chooses which to trust |
 | `broker` | always in a line of the name alone; elsewhere where named | The name of the broker that bought the special prizes, only where the observer gave one. Most brokers have no name a player would know, so most lines of a sum have none |
 | `game` | always in a line of a sum | `pachinko` or `pachislot` |
 | `tier` | always in a line of a sum | The corner, by the rate the parlor advertises (`4円`, `1円`, `20円`, `5円`, …) |
@@ -91,10 +93,12 @@ passed over by whoever reads the two together.
 
 ## Where the data comes from
 
-From reports taken at survey.p-lens.jp and nowhere else: reported as seen on
-site by the observer, and given under CC0 by the reporter. survey.p-lens.jp
-takes only a report whose source is 現地で確認した and whose day is not one
-still to come, holds it to the format, and sets it down as it is. Whether what
+From reports taken at survey.p-lens.jp and nowhere else: reported as known by
+the observer, on site or otherwise, and given under CC0 by the reporter. survey.p-lens.jp
+takes a report however it was known, and of a day up to half a year ahead,
+holds it to the format, and sets it down as it is, with how it was known
+(`source`), the day it held (`observedOn`), and the moment it was taken in
+`submission`, a UUIDv7. Whether what
 it says is true is not checked. Reporters agree not to report hearsay, word of
 a change to come, or anything copied from a parlor portal, a map service such
 as Google Maps, or any other site or database.
