@@ -72,7 +72,7 @@ broker that buys the parlor's special prizes. It has no `game`, `tier`,
 |---|---|---|
 | `parlor` | always | The parlor the special prizes were given at: an `id` in p-lens-parlors' `parlors.jsonl` or `unplaced.jsonl` |
 | `observedOn` | always | The day the observer says it held (YYYY-MM-DD): up to half a year ahead, for a change a parlor posts before it comes |
-| `source` | from 2026-10-22 on | How the observer knew it: `on-site` (現地で確認した), `publication` (the operator's own site) or `other`. Lines before it have none, and were all `on-site`. Nothing is refused by it; whoever reads the lines chooses which to trust |
+| `source` | from 2026-10-22 on | How the observer knew it: `on-site` (現地で確認した), `publication` (the operator's own site) or `other` (その他の方法で知った). Lines before it have none, and were all `on-site`. Nothing is refused by it; whoever reads the lines chooses which to trust |
 | `broker` | always in a line of the name alone; elsewhere where named | The name of the broker that bought the special prizes, only where the observer gave one. Most brokers have no name a player would know, so most lines of a sum have none |
 | `game` | always in a line of a sum | `pachinko` or `pachislot` |
 | `tier` | always in a line of a sum | The corner, by the rate the parlor advertises (`4円`, `1円`, `20円`, `5円`, …) |
